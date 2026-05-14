@@ -42,8 +42,8 @@ AI CMS — это веб-приложение для управления кли
 ### 1. Клонирование репозитория
 
 ```bash
-git clone <repository-url>
-cd ai-cms
+git clone ai-orchestrator-cms
+cd ai-orchestrator-cms
 ```
 
 ### 2. Установка зависимостей
