@@ -1,119 +1,119 @@
 # AI CMS
 
-Система управления клиентами с разделением доступа по ролям.
+A client management system with role-based access control.
 
-## Описание
+## Description
 
-AI CMS — это веб-приложение для управления клиентами и менеджерами. Система предоставляет различные уровни доступа в зависимости от роли пользователя:
+AI CMS is a web application for managing clients and managers. The system provides different access levels depending on the user's role:
 
-- **Менеджер**: работает только со своими клиентами
-- **Супер-менеджер**: управляет всеми клиентами и менеджерами
-- **Администратор**: полный доступ ко всем разделам системы
+- **Manager**: works only with their own clients
+- **Super Manager**: manages all clients and managers
+- **Administrator**: full access to all sections of the system
 
-## Технологический стек
+## Technology Stack
 
 ### Backend
 - PHP 8.2.29
 - Laravel 12.40.2
-- SQLite (для разработки)
-- Laravel Fortify (аутентификация)
+- SQLite (for development)
+- Laravel Fortify (authentication)
 
 ### Frontend
 - Vue.js 3.5.22
 - Inertia.js 2.0.11
 - Tailwind CSS 4.1.14
-- TypeScript (через Wayfinder)
+- TypeScript (via Wayfinder)
 
-### Инструменты разработки
-- Pest 3.8.4 (тестирование)
-- Laravel Pint 1.26.0 (форматирование кода)
-- Laravel Sail 1.48.1 (Docker окружение)
+### Development Tools
+- Pest 3.8.4 (testing)
+- Laravel Pint 1.26.0 (code formatting)
+- Laravel Sail 1.48.1 (Docker environment)
 
-## Требования
+## Requirements
 
 - PHP >= 8.2
 - Composer
 - Node.js >= 18.x
-- npm или yarn
-- SQLite (для разработки) или MySQL/PostgreSQL (для production)
+- npm or yarn
+- SQLite (for development) or MySQL/PostgreSQL (for production)
 
-## Установка
+## Installation
 
-### 1. Клонирование репозитория
+### 1. Clone the Repository
 
 ```bash
 git clone ai-orchestrator-cms
 cd ai-orchestrator-cms
 ```
 
-### 2. Установка зависимостей
+### 2. Install Dependencies
 
 ```bash
-# Backend зависимости
+# Backend dependencies
 composer install
 
-# Frontend зависимости
+# Frontend dependencies
 npm install
 ```
 
-### 3. Настройка окружения
+### 3. Configure Environment
 
 ```bash
-# Копирование файла окружения
+# Copy environment file
 cp .env.example .env
 
-# Генерация ключа приложения
+# Generate application key
 php artisan key:generate
 ```
 
-Отредактируйте файл `.env` и настройте:
-- `DB_CONNECTION` (sqlite для разработки)
-- `DB_DATABASE` (путь к файлу базы данных для SQLite)
-- Другие необходимые параметры
+Edit the `.env` file and configure:
+- `DB_CONNECTION` (sqlite for development)
+- `DB_DATABASE` (path to the database file for SQLite)
+- Other required parameters
 
-### 4. Настройка базы данных
+### 4. Set Up Database
 
 ```bash
-# Выполнение миграций
+# Run migrations
 php artisan migrate
 
-# Создание администратора (опционально)
+# Create administrator (optional)
 php artisan db:seed
 ```
 
-### 5. Сборка фронтенда
+### 5. Build Frontend
 
 ```bash
-# Для разработки (с hot reload)
+# For development (with hot reload)
 npm run dev
 
-# Для production
+# For production
 npm run build
 ```
 
-### 6. Генерация Wayfinder типов
+### 6. Generate Wayfinder Types
 
 ```bash
 php artisan wayfinder:generate
 ```
 
-### 7. Запуск приложения
+### 7. Start the Application
 
 ```bash
-# Запуск встроенного сервера Laravel
+# Start Laravel built-in server
 php artisan serve
 
-# Или через Sail (Docker)
+# Or via Sail (Docker)
 ./vendor/bin/sail up
 ```
 
-Приложение будет доступно по адресу: `http://localhost:8000`
+The application will be available at: `http://localhost:8000`
 
-## Использование
+## Usage
 
-### Создание первого администратора
+### Creating the First Administrator
 
-После установки создайте первого администратора через tinker:
+After installation, create the first administrator via tinker:
 
 ```bash
 php artisan tinker
@@ -130,68 +130,68 @@ User::create([
 ]);
 ```
 
-### Вход в систему
+### Logging In
 
-1. Откройте главную страницу `/`
-2. Введите email и пароль
-3. После успешной авторизации вы будете перенаправлены на `/dashboard`
+1. Open the home page `/`
+2. Enter email and password
+3. After successful authentication, you will be redirected to `/dashboard`
 
-### Роли и права доступа
+### Roles and Permissions
 
-#### Менеджер
-- Просмотр и управление только своими клиентами
-- Доступ к разделам: Главная, Клиенты
+#### Manager
+- View and manage only their own clients
+- Access to sections: Home, Clients
 
-#### Супер-менеджер
-- Просмотр и управление всеми клиентами
-- Управление менеджерами (создание, редактирование, удаление)
-- Смена ответственного менеджера у клиента
-- Смена пароля менеджеров
-- Управление активностью менеджеров
-- Доступ к разделам: Главная, Клиенты, Менеджеры
+#### Super Manager
+- View and manage all clients
+- Manage managers (create, edit, delete)
+- Change the responsible manager for a client
+- Change manager passwords
+- Manage manager activity status
+- Access to sections: Home, Clients, Managers
 
-#### Администратор
-- Полный доступ ко всем разделам системы
-- Все возможности супер-менеджера
-- Может управлять менеджерами любого типа
+#### Administrator
+- Full access to all sections of the system
+- All super manager capabilities
+- Can manage managers of any type
 
-## Разработка
+## Development
 
-### Структура проекта
+### Project Structure
 
 ```
 ai-cms/
-├── app/                    # Backend код
-│   ├── Enums/             # Enum классы
-│   ├── Http/              # Контроллеры, Requests, Middleware
-│   ├── Models/            # Eloquent модели
-│   └── Policies/          # Политики авторизации
-├── database/              # Миграции, фабрики, сидеры
-├── resources/             # Frontend ресурсы
+├── app/                    # Backend code
+│   ├── Enums/             # Enum classes
+│   ├── Http/              # Controllers, Requests, Middleware
+│   ├── Models/            # Eloquent models
+│   └── Policies/          # Authorization policies
+├── database/              # Migrations, factories, seeders
+├── resources/             # Frontend resources
 │   ├── js/
-│   │   ├── components/   # Vue компоненты
-│   │   ├── pages/        # Inertia страницы
-│   │   └── types/        # TypeScript типы
-│   └── css/              # Стили
-├── routes/                # Маршруты
-├── tests/                 # Тесты
-└── public/               # Публичные файлы
+│   │   ├── components/   # Vue components
+│   │   ├── pages/        # Inertia pages
+│   │   └── types/        # TypeScript types
+│   └── css/              # Styles
+├── routes/                # Routes
+├── tests/                 # Tests
+└── public/               # Public files
 ```
 
-### Запуск тестов
+### Running Tests
 
 ```bash
-# Все тесты
+# All tests
 php artisan test
 
-# Конкретный тест
+# Specific test
 php artisan test tests/Feature/ClientControllerTest.php
 
-# С фильтром
+# With filter
 php artisan test --filter=testName
 ```
 
-### Форматирование кода
+### Code Formatting
 
 ```bash
 # PHP (Laravel Pint)
@@ -201,50 +201,49 @@ vendor/bin/pint
 npm run format
 ```
 
-### Генерация Wayfinder типов
+### Generating Wayfinder Types
 
-После изменения маршрутов необходимо перегенерировать типы:
+After changing routes, you need to regenerate types:
 
 ```bash
 php artisan wayfinder:generate
 ```
 
-## API маршруты
+## API Routes
 
-### Клиенты
+### Clients
 
-- `GET /dashboard/clients` - список клиентов
-- `POST /dashboard/clients` - создание клиента
-- `GET /dashboard/clients/{id}` - просмотр клиента
-- `PUT /dashboard/clients/{id}` - обновление клиента
-- `DELETE /dashboard/clients/{id}` - удаление клиента
-- `POST /dashboard/clients/{id}/change-manager` - смена менеджера
+- `GET /dashboard/clients` - list of clients
+- `POST /dashboard/clients` - create client
+- `GET /dashboard/clients/{id}` - view client
+- `PUT /dashboard/clients/{id}` - update client
+- `DELETE /dashboard/clients/{id}` - delete client
+- `POST /dashboard/clients/{id}/change-manager` - change manager
 
-### Менеджеры
+### Managers
 
-- `GET /dashboard/managers` - список менеджеров
-- `POST /dashboard/managers` - создание менеджера
-- `GET /dashboard/managers/{id}` - просмотр менеджера
-- `PUT /dashboard/managers/{id}` - обновление менеджера
-- `DELETE /dashboard/managers/{id}` - удаление менеджера
-- `POST /dashboard/managers/{id}/change-password` - смена пароля
-- `POST /dashboard/managers/{id}/toggle-active` - переключение активности
+- `GET /dashboard/managers` - list of managers
+- `POST /dashboard/managers` - create manager
+- `GET /dashboard/managers/{id}` - view manager
+- `PUT /dashboard/managers/{id}` - update manager
+- `DELETE /dashboard/managers/{id}` - delete manager
+- `POST /dashboard/managers/{id}/change-password` - change password
+- `POST /dashboard/managers/{id}/toggle-active` - toggle activity status
 
-## Документация
+## Documentation
 
-- [Документ по разработке](DEVELOPMENT.md) - подробное описание архитектуры и реализации
-- [Документ по мануальному тестированию](MANUAL_TESTING.md) - инструкции по тестированию системы
-- [Документ о процессе Vibe Coding](VIBE_CODING.md) - описание workflow в данном проекте
+- [Development Document](DEVELOPMENT.md) - detailed description of architecture and implementation
+- [Manual Testing Document](MANUAL_TESTING.md) - instructions for testing the system
+- [Vibe Coding Process Document](VIBE_CODING.md) - description of the workflow in this project
 
-## Лицензия
+## License
 
-Проект создан для исследовательских целей.
+The project was created for research purposes.
 
-## Авторы
+## Authors
 
-Проект разработан с использованием AI-ассистентов для исследования возможностей веб-разработки.
+The project was developed using AI assistants to explore web development capabilities.
 
-## Поддержка
+## Support
 
-При возникновении проблем или вопросов, пожалуйста, создайте issue в репозитории проекта.
-
+If you encounter any problems or have questions, please create an issue in the project repository.

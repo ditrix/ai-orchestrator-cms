@@ -1,303 +1,302 @@
-# Документ по разработке системы AI CMS
+# AI CMS System Development Document
 
-## Общая информация
+## General Information
 
-**Название проекта**: AI CMS  
-**Версия**: 1.0.0  
-**Дата завершения разработки**: 2025-01-27  
-**Статус**: ✅ Все задачи завершены (100%)
+**Project Name**: AI CMS  
+**Version**: 1.0.0  
+**Development Completion Date**: 2025-01-27  
+**Status**: ✅ All tasks completed (100%)
 
-## Описание системы
+## System Description
 
-AI CMS — это система управления клиентами с разделением доступа по ролям. Система позволяет менеджерам работать со списком своих клиентов, а супер-менеджерам и администраторам — управлять всеми клиентами и менеджерами.
+AI CMS is a client management system with role-based access control. The system allows managers to work with their own client list, while super managers and administrators can manage all clients and managers.
 
-### Основные возможности
+### Key Features
 
-- Управление клиентами (CRUD операции)
-- Управление менеджерами (CRUD операции)
-- Разделение доступа по ролям (Менеджер, Супер-менеджер, Администратор)
-- Поиск и сортировка в таблицах
-- Статистика на главной странице
-- Смена ответственного менеджера у клиента
-- Управление активностью менеджеров
-- Смена паролей менеджеров
+- Client management (CRUD operations)
+- Manager management (CRUD operations)
+- Role-based access control (Manager, Super Manager, Administrator)
+- Search and sorting in tables
+- Statistics on the home page
+- Changing the responsible manager for a client
+- Manager activity management
+- Manager password changes
 
-## Технологический стек
+## Technology Stack
 
 ### Backend
 - **PHP**: 8.2.29
 - **Laravel Framework**: 12.40.2
-- **База данных**: SQLite (для разработки)
-- **Аутентификация**: Laravel Fortify v1.32.1
+- **Database**: SQLite (for development)
+- **Authentication**: Laravel Fortify v1.32.1
 - **ORM**: Eloquent
 
 ### Frontend
 - **Inertia.js**: v2.0.11 (Laravel) + v2.2.7 (Vue3)
 - **Vue.js**: 3.5.22
-- **TypeScript**: через Wayfinder для типизации маршрутов
+- **TypeScript**: via Wayfinder for route typing
 - **Tailwind CSS**: v4.1.14
-- **Wayfinder**: v0.1.12 (генерация типизированных маршрутов)
+- **Wayfinder**: v0.1.12 (typed route generation)
 
-### Инструменты разработки
-- **Pest**: v3.8.4 (тестирование)
-- **Laravel Pint**: v1.26.0 (форматирование кода)
-- **Laravel Sail**: v1.48.1 (Docker окружение)
+### Development Tools
+- **Pest**: v3.8.4 (testing)
+- **Laravel Pint**: v1.26.0 (code formatting)
+- **Laravel Sail**: v1.48.1 (Docker environment)
 
-## Архитектура системы
+## System Architecture
 
-### Структура данных
+### Data Structure
 
-#### Таблица `users`
+#### `users` Table
 - `id` (primary key)
 - `name` (string)
 - `email` (string, unique)
 - `password` (hashed)
 - `role` (enum: MANAGER, SUPER_MANAGER, ADMIN)
-- `is_active` (boolean) - флаг активности для менеджеров
+- `is_active` (boolean) - activity flag for managers
 - `email_verified_at` (timestamp, nullable)
 - `remember_token` (string, nullable)
 - `created_at`, `updated_at` (timestamps)
 
-#### Таблица `clients`
+#### `clients` Table
 - `id` (primary key)
 - `name` (string)
 - `email` (string)
 - `manager_id` (foreign key -> users.id, nullable)
 - `created_at`, `updated_at` (timestamps)
 
-### Роли пользователей
+### User Roles
 
-#### 1. Менеджер (MANAGER)
-- Доступ только к своим клиентам (где `manager_id = user.id`)
-- CRUD операции только в рамках своих клиентов
-- Видит только разделы: Главная, Клиенты
+#### 1. Manager (MANAGER)
+- Access only to their own clients (where `manager_id = user.id`)
+- CRUD operations only within their own clients
+- Sees only sections: Home, Clients
 
-#### 2. Супер-менеджер (SUPER_MANAGER)
-- Доступ ко всем клиентам
-- CRUD операции со всеми клиентами
-- Возможность смены ответственного менеджера у клиента
-- Доступ к управлению менеджерами (CRUD)
-- Возможность изменения пароля менеджеров
-- Управление флагом активности менеджеров
-- При удалении менеджера — обязательная передача клиентов другому менеджеру
-- Видит разделы: Главная, Клиенты, Менеджеры
+#### 2. Super Manager (SUPER_MANAGER)
+- Access to all clients
+- CRUD operations with all clients
+- Ability to change the responsible manager for a client
+- Access to manager management (CRUD)
+- Ability to change manager passwords
+- Manager activity flag management
+- When deleting a manager — mandatory transfer of clients to another manager
+- Sees sections: Home, Clients, Managers
 
-#### 3. Администратор (ADMIN)
-- Полный доступ ко всем разделам системы
-- Все возможности супер-менеджера
-- Может работать с менеджерами любого типа
-- Видит разделы: Главная, Клиенты, Менеджеры
+#### 3. Administrator (ADMIN)
+- Full access to all sections of the system
+- All super manager capabilities
+- Can work with managers of any type
+- Sees sections: Home, Clients, Managers
 
-## Структура проекта
+## Project Structure
 
-### Backend компоненты
+### Backend Components
 
-#### Модели
-- `app/Models/User.php` - модель пользователя с ролями
-- `app/Models/Client.php` - модель клиента
+#### Models
+- `app/Models/User.php` - user model with roles
+- `app/Models/Client.php` - client model
 
 #### Enums
-- `app/Enums/UserRole.php` - роли пользователей
+- `app/Enums/UserRole.php` - user roles
 
-#### Контроллеры
-- `app/Http/Controllers/ClientController.php` - управление клиентами
-- `app/Http/Controllers/ManagerController.php` - управление менеджерами
+#### Controllers
+- `app/Http/Controllers/ClientController.php` - client management
+- `app/Http/Controllers/ManagerController.php` - manager management
 
-#### Policies (Авторизация)
-- `app/Policies/ClientPolicy.php` - политика доступа к клиентам
-- `app/Policies/UserPolicy.php` - политика доступа к менеджерам
+#### Policies (Authorization)
+- `app/Policies/ClientPolicy.php` - client access policy
+- `app/Policies/UserPolicy.php` - manager access policy
 
-#### Form Requests (Валидация)
-- `app/Http/Requests/Client/StoreClientRequest.php` - валидация создания клиента
-- `app/Http/Requests/Client/UpdateClientRequest.php` - валидация обновления клиента
-- `app/Http/Requests/Manager/StoreManagerRequest.php` - валидация создания менеджера
-- `app/Http/Requests/Manager/UpdateManagerRequest.php` - валидация обновления менеджера
-- `app/Http/Requests/Manager/ChangePasswordRequest.php` - валидация смены пароля
-- `app/Http/Requests/Manager/TransferClientsRequest.php` - валидация передачи клиентов
+#### Form Requests (Validation)
+- `app/Http/Requests/Client/StoreClientRequest.php` - client creation validation
+- `app/Http/Requests/Client/UpdateClientRequest.php` - client update validation
+- `app/Http/Requests/Manager/StoreManagerRequest.php` - manager creation validation
+- `app/Http/Requests/Manager/UpdateManagerRequest.php` - manager update validation
+- `app/Http/Requests/Manager/ChangePasswordRequest.php` - password change validation
+- `app/Http/Requests/Manager/TransferClientsRequest.php` - client transfer validation
 
-#### Миграции
+#### Migrations
 - `database/migrations/2025_11_29_134914_add_role_and_is_active_to_users_table.php`
 - `database/migrations/2025_11_29_134915_create_clients_table.php`
 
-#### Фабрики
-- `database/factories/UserFactory.php` - фабрика пользователей
-- `database/factories/ClientFactory.php` - фабрика клиентов
+#### Factories
+- `database/factories/UserFactory.php` - user factory
+- `database/factories/ClientFactory.php` - client factory
 
-### Frontend компоненты
+### Frontend Components
 
-#### Страницы
-- `resources/js/pages/Welcome.vue` - главная страница (до авторизации)
-- `resources/js/pages/Dashboard.vue` - главная страница (после авторизации)
-- `resources/js/pages/Clients/Index.vue` - список клиентов
-- `resources/js/pages/Managers/Index.vue` - список менеджеров
+#### Pages
+- `resources/js/pages/Welcome.vue` - home page (before authentication)
+- `resources/js/pages/Dashboard.vue` - home page (after authentication)
+- `resources/js/pages/Clients/Index.vue` - client list
+- `resources/js/pages/Managers/Index.vue` - manager list
 
-#### Компоненты
-- `resources/js/components/DataTable.vue` - универсальная таблица CRUD
-- `resources/js/components/ClientForm.vue` - форма создания/редактирования клиента
-- `resources/js/components/ManagerForm.vue` - форма создания/редактирования менеджера
-- `resources/js/components/ChangeManagerModal.vue` - модальное окно смены менеджера
-- `resources/js/components/ChangePasswordModal.vue` - модальное окно смены пароля
-- `resources/js/components/AppSidebar.vue` - боковая панель навигации
+#### Components
+- `resources/js/components/DataTable.vue` - universal CRUD table
+- `resources/js/components/ClientForm.vue` - client create/edit form
+- `resources/js/components/ManagerForm.vue` - manager create/edit form
+- `resources/js/components/ChangeManagerModal.vue` - change manager modal
+- `resources/js/components/ChangePasswordModal.vue` - change password modal
+- `resources/js/components/AppSidebar.vue` - sidebar navigation
 
-### Тесты
+### Tests
 
-#### Feature тесты
-- `tests/Feature/ClientControllerTest.php` - тесты контроллера клиентов (28 тестов)
-- `tests/Feature/ManagerControllerTest.php` - тесты контроллера менеджеров (31 тест)
-- `tests/Feature/DashboardTest.php` - тесты главной страницы
-- `tests/Feature/Auth/*` - тесты аутентификации
+#### Feature Tests
+- `tests/Feature/ClientControllerTest.php` - client controller tests (28 tests)
+- `tests/Feature/ManagerControllerTest.php` - manager controller tests (31 tests)
+- `tests/Feature/DashboardTest.php` - home page tests
+- `tests/Feature/Auth/*` - authentication tests
 
-## Маршруты
+## Routes
 
-### Публичные маршруты
-- `GET /` - главная страница (Welcome)
+### Public Routes
+- `GET /` - home page (Welcome)
 
-### Защищенные маршруты (требуют авторизации)
-- `GET /dashboard` - главная страница дашборда
-- `GET /dashboard/clients` - список клиентов
-- `POST /dashboard/clients` - создание клиента
-- `GET /dashboard/clients/{id}` - просмотр клиента
-- `PUT /dashboard/clients/{id}` - обновление клиента
-- `DELETE /dashboard/clients/{id}` - удаление клиента
-- `POST /dashboard/clients/{id}/change-manager` - смена менеджера
+### Protected Routes (require authentication)
+- `GET /dashboard` - dashboard home page
+- `GET /dashboard/clients` - client list
+- `POST /dashboard/clients` - create client
+- `GET /dashboard/clients/{id}` - view client
+- `PUT /dashboard/clients/{id}` - update client
+- `DELETE /dashboard/clients/{id}` - delete client
+- `POST /dashboard/clients/{id}/change-manager` - change manager
 
-- `GET /dashboard/managers` - список менеджеров (только супер-менеджер/админ)
-- `POST /dashboard/managers` - создание менеджера
-- `GET /dashboard/managers/{id}` - просмотр менеджера
-- `PUT /dashboard/managers/{id}` - обновление менеджера
-- `DELETE /dashboard/managers/{id}` - удаление менеджера
-- `POST /dashboard/managers/{id}/change-password` - смена пароля
-- `POST /dashboard/managers/{id}/toggle-active` - переключение активности
+- `GET /dashboard/managers` - manager list (super manager/admin only)
+- `POST /dashboard/managers` - create manager
+- `GET /dashboard/managers/{id}` - view manager
+- `PUT /dashboard/managers/{id}` - update manager
+- `DELETE /dashboard/managers/{id}` - delete manager
+- `POST /dashboard/managers/{id}/change-password` - change password
+- `POST /dashboard/managers/{id}/toggle-active` - toggle activity status
 
-## Реализованный функционал
+## Implemented Functionality
 
-### Управление клиентами
-- ✅ Просмотр списка клиентов с фильтрацией по роли
-- ✅ Создание клиента
-- ✅ Редактирование клиента
-- ✅ Удаление клиента
-- ✅ Поиск по имени и email
-- ✅ Сортировка по ID, имени, email
-- ✅ Пагинация
-- ✅ Смена ответственного менеджера (для супер-менеджера/админа)
+### Client Management
+- ✅ View client list with role-based filtering
+- ✅ Create client
+- ✅ Edit client
+- ✅ Delete client
+- ✅ Search by name and email
+- ✅ Sort by ID, name, email
+- ✅ Pagination
+- ✅ Change responsible manager (for super manager/admin)
 
-### Управление менеджерами
-- ✅ Просмотр списка менеджеров (только супер-менеджер/админ)
-- ✅ Создание менеджера
-- ✅ Редактирование менеджера
-- ✅ Удаление менеджера с передачей клиентов
-- ✅ Поиск по имени и email
-- ✅ Сортировка по ID, имени, email, активности
-- ✅ Пагинация
-- ✅ Смена пароля менеджера
-- ✅ Переключение флага активности
+### Manager Management
+- ✅ View manager list (super manager/admin only)
+- ✅ Create manager
+- ✅ Edit manager
+- ✅ Delete manager with client transfer
+- ✅ Search by name and email
+- ✅ Sort by ID, name, email, activity
+- ✅ Pagination
+- ✅ Change manager password
+- ✅ Toggle activity flag
 
-### Авторизация и безопасность
-- ✅ Аутентификация через Laravel Fortify
-- ✅ Авторизация через Policies
-- ✅ Разделение доступа по ролям
-- ✅ Валидация данных через Form Requests
-- ✅ Защита от CSRF
-- ✅ Хеширование паролей
+### Authorization and Security
+- ✅ Authentication via Laravel Fortify
+- ✅ Authorization via Policies
+- ✅ Role-based access control
+- ✅ Data validation via Form Requests
+- ✅ CSRF protection
+- ✅ Password hashing
 
-### Интерфейс
-- ✅ Адаптивный дизайн с Tailwind CSS v4
-- ✅ Динамическая навигация по ролям
-- ✅ Универсальная таблица DataTable
-- ✅ Модальные окна для форм
-- ✅ Статистика на главной странице
-- ✅ Минималистичный дизайн в духе iOS
+### Interface
+- ✅ Responsive design with Tailwind CSS v4
+- ✅ Dynamic role-based navigation
+- ✅ Universal DataTable
+- ✅ Modal windows for forms
+- ✅ Statistics on the home page
+- ✅ Minimalist iOS-inspired design
 
-## Статистика разработки
+## Development Statistics
 
-### Выполненные задачи
-- **Всего задач**: 25
-- **Завершено**: 25 (100%)
-- **В работе**: 0
-- **Ожидает**: 0
-- **Блокировано**: 0
+### Completed Tasks
+- **Total tasks**: 25
+- **Completed**: 25 (100%)
+- **In progress**: 0
+- **Pending**: 0
+- **Blocked**: 0
 
-### Распределение по агентам
-- **dev_agent_1**: 5/5 выполнено (100%) — Backend Foundation (клиенты)
-- **dev_agent_2**: 6/6 выполнено (100%) — Backend Foundation (менеджеры)
-- **dev_agent_3**: 9/9 выполнено (100%) — Frontend Components и Pages
-- **dev_ops_agent**: 3/3 выполнено (100%) — Integration (маршруты, навигация, Wayfinder)
-- **qa_agent**: 2/2 выполнено (100%) — Testing
+### Distribution by Agent
+- **dev_agent_1**: 5/5 completed (100%) — Backend Foundation (clients)
+- **dev_agent_2**: 6/6 completed (100%) — Backend Foundation (managers)
+- **dev_agent_3**: 9/9 completed (100%) — Frontend Components and Pages
+- **dev_ops_agent**: 3/3 completed (100%) — Integration (routes, navigation, Wayfinder)
+- **qa_agent**: 2/2 completed (100%) — Testing
 
-### Тестирование
-- **Всего тестов**: 59
-- **Feature тесты**: 59
-- **Все тесты проходят успешно**: ✅
+### Testing
+- **Total tests**: 59
+- **Feature tests**: 59
+- **All tests pass successfully**: ✅
 
-## Принципы разработки
+## Development Principles
 
-### SOLID принципы
-- **Single Responsibility**: каждый класс имеет одну ответственность
-- **Open/Closed**: расширение через наследование и интерфейсы
-- **Liskov Substitution**: корректное использование наследования
-- **Interface Segregation**: разделение интерфейсов по назначению
-- **Dependency Inversion**: зависимость от абстракций через DI
+### SOLID Principles
+- **Single Responsibility**: each class has one responsibility
+- **Open/Closed**: extension through inheritance and interfaces
+- **Liskov Substitution**: correct use of inheritance
+- **Interface Segregation**: separation of interfaces by purpose
+- **Dependency Inversion**: dependency on abstractions via DI
 
-### Паттерны проектирования
-- **Policy Pattern**: авторизация через Laravel Policies
-- **Form Request Pattern**: валидация через отдельные классы
-- **Component Pattern**: переиспользуемые Vue компоненты
-- **Repository Pattern**: Eloquent ORM как репозиторий
+### Design Patterns
+- **Policy Pattern**: authorization via Laravel Policies
+- **Form Request Pattern**: validation via separate classes
+- **Component Pattern**: reusable Vue components
+- **Repository Pattern**: Eloquent ORM as repository
 
-### Стандарты кода
-- Laravel Pint для форматирования PHP кода
-- ESLint и Prettier для форматирования JavaScript/TypeScript
-- PHPDoc для документирования PHP кода
-- TypeScript типы для фронтенда
+### Code Standards
+- Laravel Pint for PHP code formatting
+- ESLint and Prettier for JavaScript/TypeScript formatting
+- PHPDoc for PHP code documentation
+- TypeScript types for frontend
 
-## Процесс разработки
+## Development Process
 
-### Этапы разработки
-1. **Этап 1**: Базовая структура данных (миграции, модели, Enum)
-2. **Этап 2**: Авторизация и политики (Policies)
-3. **Этап 3**: Валидация (Form Requests)
-4. **Этап 4**: Контроллеры (ClientController, ManagerController)
-5. **Этап 5**: Маршруты (routes/web.php)
-6. **Этап 6**: Frontend компоненты (DataTable, формы)
-7. **Этап 7**: Frontend страницы (Clients/Index, Managers/Index, Dashboard)
-8. **Этап 8**: Интеграция (Wayfinder, навигация)
-9. **Этап 9**: Тестирование (Feature тесты)
+### Development Stages
+1. **Stage 1**: Basic data structure (migrations, models, Enum)
+2. **Stage 2**: Authorization and policies (Policies)
+3. **Stage 3**: Validation (Form Requests)
+4. **Stage 4**: Controllers (ClientController, ManagerController)
+5. **Stage 5**: Routes (routes/web.php)
+6. **Stage 6**: Frontend components (DataTable, forms)
+7. **Stage 7**: Frontend pages (Clients/Index, Managers/Index, Dashboard)
+8. **Stage 8**: Integration (Wayfinder, navigation)
+9. **Stage 9**: Testing (Feature tests)
 
-### Параллелизация
-Задачи были распределены между агентами для параллельной разработки:
-- Backend Foundation (клиенты и менеджеры) - параллельно
-- Frontend Components - параллельно
-- Integration и Testing - параллельно после завершения основных компонентов
+### Parallelization
+Tasks were distributed among agents for parallel development:
+- Backend Foundation (clients and managers) - in parallel
+- Frontend Components - in parallel
+- Integration and Testing - in parallel after main components completion
 
-## Известные ограничения
+## Known Limitations
 
-1. **База данных**: Используется SQLite для разработки. Для production рекомендуется PostgreSQL или MySQL.
-2. **Кэширование**: Не реализовано кэширование данных для повышения производительности.
-3. **Очереди**: Не используются очереди для фоновых задач.
-4. **API**: Нет REST API endpoints для мобильных приложений.
-5. **Экспорт данных**: Не реализован экспорт данных в Excel/CSV.
-6. **История изменений**: Не ведется audit log изменений.
+1. **Database**: SQLite is used for development. PostgreSQL or MySQL is recommended for production.
+2. **Caching**: Data caching for performance improvement is not implemented.
+3. **Queues**: Queues are not used for background tasks.
+4. **API**: No REST API endpoints for mobile applications.
+5. **Data Export**: Data export to Excel/CSV is not implemented.
+6. **Change History**: Audit log of changes is not maintained.
 
-## Будущие улучшения
+## Future Improvements
 
-### Возможные расширения
-- API endpoints для мобильных приложений
-- Экспорт данных в Excel/CSV
-- Расширенная фильтрация и поиск
-- История изменений (audit log)
-- Уведомления и события
-- Расширенная статистика и аналитика
-- Двухфакторная аутентификация (уже поддерживается Fortify, но не настроена)
-- Темная тема интерфейса
+### Possible Extensions
+- API endpoints for mobile applications
+- Data export to Excel/CSV
+- Advanced filtering and search
+- Change history (audit log)
+- Notifications and events
+- Advanced statistics and analytics
+- Two-factor authentication (already supported by Fortify, but not configured)
+- Dark theme for the interface
 
-### Оптимизации
-- Переход на PostgreSQL для production
-- Redis для кэширования и сессий
-- Очереди для фоновых задач
-- CDN для статических ресурсов
-- Оптимизация запросов к базе данных (eager loading)
+### Optimizations
+- Migration to PostgreSQL for production
+- Redis for caching and sessions
+- Queues for background tasks
+- CDN for static resources
+- Database query optimization (eager loading)
 
-## Заключение
+## Conclusion
 
-Система AI CMS полностью реализована согласно требованиям PRD. Все компоненты протестированы и работают корректно. Проект готов к использованию и дальнейшему развитию.
-
+The AI CMS system is fully implemented according to PRD requirements. All components are tested and work correctly. The project is ready for use and further development.
